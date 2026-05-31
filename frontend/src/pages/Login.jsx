@@ -135,7 +135,7 @@ export default function Login() {
         <div style={S.logoWrap}>
           <Link to="/">
             <div style={S.logoIcon}>⚡</div>
-            <span style={S.logoText}>CodeReview.ai</span>
+            <span style={S.logoText}>Meridian.ai</span>
           </Link>
         </div>
 

@@ -54,7 +54,7 @@ export default function Register() {
           <div style={{ marginBottom: 36 }}>
             <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 28 }}>
               <div style={{ width: 28, height: 28, borderRadius: 6, background: 'linear-gradient(135deg,#2563EB,#7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>⚡</div>
-              <span style={{ fontWeight: 800, fontSize: 15, background: 'linear-gradient(135deg,#4F9CF9,#A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>CodeReview.ai</span>
+              <span style={{ fontWeight: 800, fontSize: 15, background: 'linear-gradient(135deg,#4F9CF9,#A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Meridian.ai</span>
             </Link>
             <h1 style={{ fontSize: 28, fontWeight: 800, color: '#F8FAFC', letterSpacing: -1, marginBottom: 6 }}>Create account</h1>
             <p style={{ fontSize: 14, color: '#64748B' }}>Start catching bugs with AI today</p>
