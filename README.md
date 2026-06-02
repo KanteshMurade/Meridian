@@ -1,4 +1,4 @@
-# 🚀 AI-Powered Code Review and Bug Suggestion System
+# 🚀 Meridian.ai - AI-Powered Code Review and Bug Suggestion System
 
 > Intelligent AI-driven platform for automated code review, bug detection, refactoring suggestions, and severity analysis.
 
@@ -6,7 +6,7 @@
 
 ## 📌 Overview
 
-The **AI-Powered Code Review and Bug Suggestion System** is a smart web-based platform designed to help developers automate the code review process using Artificial Intelligence and Large Language Models (LLMs).
+ **Meridian.ai** is a smart web-based platform designed to help developers automate the code review process using Artificial Intelligence and Large Language Models (LLMs).
 
 Instead of spending hours manually reviewing code, developers can upload or paste their code and instantly receive:
 
