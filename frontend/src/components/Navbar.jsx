@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import meridianLogo from '../assets/meridian-logo.png';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -75,12 +76,9 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <div style={{
-            width: 30, height: 30, borderRadius: 7,
-            background: 'linear-gradient(135deg, #2563EB, #7C3AED)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 15, boxShadow: '0 0 20px rgba(79,156,249,0.25)',
-          }}>⚡</div>
+          <img src={meridianLogo} alt="Meridian.ai" style={{
+            width: 30, height: 30, borderRadius: 4, objectFit: 'contain'
+          }} />
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
             <span style={{
               fontWeight: 800, fontSize: 16, letterSpacing: -0.5,

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../services/api';
+import meridianLogo from '../assets/meridian-logo.png';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -134,7 +135,9 @@ export default function Login() {
         {/* Logo */}
         <div style={S.logoWrap}>
           <Link to="/">
-            <div style={S.logoIcon}>⚡</div>
+            <img src={meridianLogo} alt="Meridian.ai" style={{
+              width: 60, height: 60, objectFit: 'contain', marginBottom: 12, display: 'block'
+            }} />
             <span style={S.logoText}>Meridian.ai</span>
           </Link>
         </div>

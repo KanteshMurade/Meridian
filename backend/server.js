@@ -46,7 +46,7 @@ app.use('/api/github', githubRoutes);
 
 // Test route
 app.get('/', (req, res) => {
-  res.json({ message: 'AI Code Review API is running' });
+  res.json({ message: 'Meridian.ai API is running' });
 });
 
 // Start server

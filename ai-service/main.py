@@ -8,7 +8,7 @@ from model import analyze_code, check_ollama_health, get_available_models
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="AI Code Review API",
+    title="Meridian.ai API",
     description="Your own AI-powered code review service using CodeLLaMA",
     version="1.0.0"
 )
@@ -48,7 +48,7 @@ class CodeReviewResponse(BaseModel):
 @app.get("/")
 def root():
     return {
-        "message": "AI Code Review API is running",
+        "message": "Meridian.ai API is running",
         "status": "online",
         "version": "1.0.0"
     }
