@@ -498,7 +498,7 @@ export default function Home() {
       {/* Footer */}
       <footer style={{ borderTop: `1px solid ${c.border}`, padding: '28px 24px', textAlign: 'center' }}>
         <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: c.muted2 }}>
-          <span style={{ background: `linear-gradient(135deg,${c.blue},${c.purple})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 700 }}>CodeReview.ai</span>
+          <span style={{ background: `linear-gradient(135deg,${c.blue},${c.purple})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 700 }}>Meridian.ai</span>
           {' '}— Built with LLaMA 3.3 70B · FastAPI · React · MongoDB
         </div>
       </footer>
