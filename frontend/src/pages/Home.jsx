@@ -244,7 +244,7 @@ export default function Home() {
       {/* ── LIVE DEMO SECTION ── */}
       <section style={{ padding: '100px 24px', maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: c.blue, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}>// live preview</div>
+          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: c.blue, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}></div>
           <h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 800, letterSpacing: -1.5, color: '#F8FAFC' }}>
             Watch it catch bugs<br />in real time
           </h2>
@@ -352,7 +352,7 @@ export default function Home() {
       <section style={{ padding: '100px 24px', background: c.surface }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 72 }}>
-            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: c.blue, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}>// how it works</div>
+            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: c.blue, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}></div>
             <h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 800, letterSpacing: -1.5, color: '#F8FAFC' }}>Three steps to cleaner code</h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, position: 'relative' }}>
@@ -381,7 +381,7 @@ export default function Home() {
       {/* ── FEATURES BENTO GRID ── */}
       <section style={{ padding: '100px 24px', maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: c.blue, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}>// features</div>
+          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: c.blue, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}></div>
           <h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 800, letterSpacing: -1.5, color: '#F8FAFC' }}>
             Built for developers<br />who care about quality
           </h2>
@@ -475,7 +475,7 @@ export default function Home() {
           {/* Glow */}
           <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,156,249,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: c.blue, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 20 }}>// get started</div>
+          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: c.blue, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 20 }}></div>
           <h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, letterSpacing: -1.5, color: '#F8FAFC', marginBottom: 16 }}>
             Ready to write<br />cleaner code?
           </h2>
