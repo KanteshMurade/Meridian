@@ -5,7 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Review from './pages/Review';
 import History from './pages/History';
-import GitHubCallback from './pages/GitHubCallback';
+import GitHubCallback from './pages/GithubCallback';
 
 function App() {
   return (

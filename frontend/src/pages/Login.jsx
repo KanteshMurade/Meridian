@@ -52,80 +52,80 @@ export default function Login() {
 
   const S = {
     page: {
-      minHeight: '100vh', background: '#04060D',
+      minHeight: '100vh', background: 'var(--bg-page)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '24px', fontFamily: "'Outfit', sans-serif",
       backgroundImage: `
-        radial-gradient(ellipse 80% 60% at 20% 0%, rgba(49,130,206,0.07) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 100%, rgba(107,70,193,0.05) 0%, transparent 60%)
+        radial-gradient(ellipse 80% 60% at 20% 0%, var(--brand-tint-07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 100%, var(--purple-tint-05) 0%, transparent 60%)
       `,
     },
     wrap: { width: '100%', maxWidth: 420 },
     logoWrap: { textAlign: 'center', marginBottom: 32 },
     logoIcon: {
       width: 44, height: 44, borderRadius: 12,
-      background: 'linear-gradient(135deg, #3182CE, #6B46C1)',
+      background: 'linear-gradient(135deg, var(--brand-blue), var(--brand-purple))',
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 22, boxShadow: '0 8px 24px rgba(49,130,206,0.35)', marginBottom: 12,
+      fontSize: 22, boxShadow: '0 8px 24px var(--brand-glow)', marginBottom: 12,
     },
     logoText: {
       display: 'block', fontWeight: 800, fontSize: 20,
-      background: 'linear-gradient(135deg, #63B3ED, #B794F4)',
+      background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-purple-soft))',
       WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
     },
     card: {
-      background: 'rgba(15,22,37,0.9)', backdropFilter: 'blur(20px)',
-      border: '1px solid rgba(255,255,255,0.07)', borderRadius: 18, padding: '36px 32px',
-      boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
+      background: 'var(--panel-alpha)', backdropFilter: 'blur(20px)',
+      border: '1px solid var(--border)', borderRadius: 18, padding: '36px 32px',
+      boxShadow: 'var(--shadow)',
     },
-    heading: { fontSize: 24, fontWeight: 800, color: '#F7FAFC', marginBottom: 4, letterSpacing: '-0.5px' },
-    sub: { fontSize: 14, color: '#718096', marginBottom: 28 },
+    heading: { fontSize: 24, fontWeight: 800, color: 'var(--text-heading)', marginBottom: 4, letterSpacing: '-0.5px' },
+    sub: { fontSize: 14, color: 'var(--text-muted)', marginBottom: 28 },
     error: {
-      background: 'rgba(252,129,129,0.08)', border: '1px solid rgba(252,129,129,0.2)',
-      color: '#FEB2B2', borderRadius: 10, padding: '10px 14px',
+      background: 'var(--danger-tint-08)', border: '1px solid var(--danger-tint-20)',
+      color: 'var(--danger-text)', borderRadius: 10, padding: '10px 14px',
       fontSize: 13, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8,
     },
-    label: { display: 'block', fontSize: 11, fontWeight: 600, color: '#718096', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 7 },
+    label: { display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 7 },
     input: {
       width: '100%', padding: '12px 14px', borderRadius: 10, fontSize: 14,
-      background: '#0C1220', border: '1px solid rgba(255,255,255,0.08)',
-      color: '#E2E8F0', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s',
+      background: 'var(--bg-elevated)', border: '1px solid var(--border-strong)',
+      color: 'var(--text-primary)', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s',
       boxSizing: 'border-box',
     },
     fieldWrap: { marginBottom: 18 },
     passWrap: { position: 'relative' },
     eyeBtn: {
       position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
-      background: 'none', border: 'none', color: '#4A5568', cursor: 'pointer', fontSize: 16, padding: 0,
+      background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', fontSize: 16, padding: 0,
     },
     btn: {
       width: '100%', padding: '13px', borderRadius: 10, fontSize: 15, fontWeight: 700,
-      background: 'linear-gradient(135deg, #3182CE, #6B46C1)',
+      background: 'linear-gradient(135deg, var(--brand-blue), var(--brand-purple))',
       color: 'white', border: 'none', cursor: 'pointer',
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-      boxShadow: '0 4px 20px rgba(49,130,206,0.3)', marginTop: 8,
+      boxShadow: '0 12px 34px var(--brand-tint-30)', marginTop: 8,
       transition: 'transform 0.2s, box-shadow 0.2s',
     },
     divider: { display: 'flex', alignItems: 'center', gap: 12, margin: '22px 0' },
-    divLine: { flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' },
-    divText: { fontSize: 12, color: '#4A5568' },
+    divLine: { flex: 1, height: 1, background: 'var(--border)' },
+    divText: { fontSize: 12, color: 'var(--text-faint)' },
     githubBtn: {
       width: '100%', padding: '12px', borderRadius: 10, fontSize: 14, fontWeight: 600,
-      background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-      color: '#CBD5E0', cursor: 'pointer',
+      background: 'var(--surface-04)', border: '1px solid var(--surface-10)',
+      color: 'var(--text-secondary)', cursor: 'pointer',
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
       transition: 'all 0.2s',
     },
-    foot: { textAlign: 'center', marginTop: 24, fontSize: 14, color: '#4A5568' },
-    link: { color: '#63B3ED', fontWeight: 600 },
+    foot: { textAlign: 'center', marginTop: 24, fontSize: 14, color: 'var(--text-faint)' },
+    link: { color: 'var(--brand-primary)', fontWeight: 600 },
   };
 
   const focusStyle = (e) => {
-    e.target.style.borderColor = 'rgba(99,179,237,0.4)';
-    e.target.style.boxShadow = '0 0 0 3px rgba(99,179,237,0.08)';
+    e.target.style.borderColor = 'var(--brand-tint-40)';
+    e.target.style.boxShadow = '0 0 0 3px var(--brand-tint-08)';
   };
   const blurStyle = (e) => {
-    e.target.style.borderColor = 'rgba(255,255,255,0.08)';
+    e.target.style.borderColor = 'var(--border-strong)';
     e.target.style.boxShadow = 'none';
   };
 
@@ -213,8 +213,8 @@ export default function Login() {
           <button
             style={S.githubBtn}
             onClick={() => window.location.href = `${API_BASE_URL}/github/login`}
-            onMouseEnter={e => { e.target.style.background = 'rgba(255,255,255,0.07)'; e.target.style.borderColor = 'rgba(255,255,255,0.15)'; }}
-            onMouseLeave={e => { e.target.style.background = 'rgba(255,255,255,0.04)'; e.target.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+            onMouseEnter={e => { e.target.style.background = 'var(--border)'; e.target.style.borderColor = 'var(--surface-15)'; }}
+            onMouseLeave={e => { e.target.style.background = 'var(--surface-04)'; e.target.style.borderColor = 'var(--surface-10)'; }}
             aria-label="Sign in with GitHub"
           >
             <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

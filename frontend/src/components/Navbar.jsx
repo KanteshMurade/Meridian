@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import meridianLogo from '../assets/meridian-logo.png';
 
+const getSavedTheme = () => {
+  if (typeof window === 'undefined') return 'dark';
+  return localStorage.getItem('theme') || 'dark';
+};
+
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -10,6 +15,13 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [theme, setTheme] = useState(getSavedTheme);
+
+  // Apply selected theme globally and remember it in browser storage
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   // Fetch user profile from backend if token exists
   useEffect(() => {
@@ -48,16 +60,52 @@ export default function Navbar() {
     setOpen(false);
   };
 
+  const toggleTheme = () => {
+    setTheme(currentTheme => currentTheme === 'dark' ? 'light' : 'dark');
+  };
+
   const isActive = (p) => location.pathname === p;
 
   const c = {
-    bg: scrolled ? 'rgba(3,5,8,0.95)' : 'rgba(3,5,8,0.7)',
-    border: scrolled ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
-    blue: '#4F9CF9',
-    purple: '#A78BFA',
-    text: '#F1F5F9',
-    muted: '#64748B',
+    bg: scrolled ? 'var(--nav-bg-solid)' : 'var(--nav-bg)',
+    border: scrolled ? 'var(--border-strong)' : 'var(--surface-04)',
+    blue: 'var(--brand-primary)',
+    purple: 'var(--brand-purple-soft)',
+    text: 'var(--text-primary)',
+    muted: 'var(--text-muted)',
   };
+
+  const themeButton = (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 7,
+        padding: '6px 12px', borderRadius: 999,
+        fontSize: 13, fontWeight: 800, letterSpacing: 0.15,
+        background: 'linear-gradient(135deg, var(--bg-panel), var(--surface-05))',
+        color: 'var(--text-primary)',
+        border: '1px solid var(--border-strong)',
+        boxShadow: '0 10px 26px var(--surface-10)',
+        cursor: 'pointer', transition: 'all 0.2s',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.color = 'var(--brand-primary)';
+        e.currentTarget.style.borderColor = 'var(--brand-tint-30)';
+        e.currentTarget.style.background = 'var(--brand-tint-10)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.color = 'var(--text-primary)';
+        e.currentTarget.style.borderColor = 'var(--border-strong)';
+        e.currentTarget.style.background = 'linear-gradient(135deg, var(--bg-panel), var(--surface-05))';
+      }}
+    >
+      <span style={{ fontSize: 14 }}>{theme === 'dark' ? '☀️' : '🌙'}</span>
+      {!isMobile && <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>}
+    </button>
+  );
 
   return (
     <nav style={{
@@ -71,50 +119,109 @@ export default function Navbar() {
     }}>
       <div style={{
         maxWidth: 1200, margin: '0 auto', padding: '0 24px',
-        height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
 
         {/* Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <img src={meridianLogo} alt="Meridian.ai" style={{
-            width: 30, height: 30, borderRadius: 4, objectFit: 'contain'
-          }} />
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 13, textDecoration: 'none' }}>
+          <span style={{
+            width: 46,
+            height: 46,
+            borderRadius: 14,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, var(--brand-tint-15), var(--purple-tint-10))',
+            border: '1px solid var(--brand-tint-30)',
+            boxShadow: '0 0 26px var(--brand-tint-25), inset 0 1px 0 var(--surface-15)',
+            flexShrink: 0,
+          }}>
+            <img src={meridianLogo} alt="Meridian.ai" style={{
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 0 12px var(--brand-glow))',
+            }} />
+          </span>
+
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
             <span style={{
-              fontWeight: 800, fontSize: 16, letterSpacing: -0.5,
-              background: 'linear-gradient(135deg, #4F9CF9, #A78BFA)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            }}>Meridian</span>
-            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#4F9CF9', fontWeight: 400 }}>.ai</span>
+              fontWeight: 950,
+              fontSize: 23,
+              letterSpacing: -0.8,
+              color: 'var(--text-heading)',
+              textShadow: '0 0 18px var(--brand-tint-25)',
+              lineHeight: 1,
+            }}>
+              Meridian
+            </span>
+
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 18,
+              color: 'var(--brand-primary)',
+              fontWeight: 900,
+              textShadow: '0 0 16px var(--brand-tint-30)',
+              lineHeight: 1,
+            }}>
+              .ai
+            </span>
           </div>
         </Link>
 
         {/* Desktop */}
         {!isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             {token ? (
               <>
                 {[
-                  { path: '/review', label: 'Review' },
-                  { path: '/history', label: 'History' },
-                ].map(({ path, label }) => (
-                  <Link key={path} to={path} style={{
-                    textDecoration: 'none', padding: '6px 14px', borderRadius: 7,
-                    fontSize: 14, fontWeight: 500, transition: 'all 0.2s',
-                    color: isActive(path) ? '#4F9CF9' : c.muted,
-                    background: isActive(path) ? 'rgba(79,156,249,0.08)' : 'transparent',
-                    border: isActive(path) ? '1px solid rgba(79,156,249,0.2)' : '1px solid transparent',
-                  }}>{label}</Link>
-                ))}
+                  { path: '/review', label: 'Review', icon: '⚡' },
+                  { path: '/history', label: 'History', icon: '📜' },
+                ].map(({ path, label, icon }) => {
+                  const active = isActive(path);
+                  return (
+                    <Link
+                      key={path}
+                      to={path}
+                      style={{
+                        textDecoration: 'none', padding: '7px 15px', borderRadius: 999,
+                        fontSize: 14, fontWeight: 800, letterSpacing: 0.15, transition: 'all 0.2s',
+                        display: 'flex', alignItems: 'center', gap: 7,
+                        color: active ? 'var(--brand-primary)' : 'var(--text-primary)',
+                        background: active ? 'var(--brand-tint-10)' : 'var(--surface-04)',
+                        border: active ? '1px solid var(--brand-tint-30)' : '1px solid var(--border)',
+                        boxShadow: active ? '0 10px 26px var(--brand-tint-15)' : '0 8px 20px var(--surface-05)',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.color = 'var(--brand-primary)';
+                        e.currentTarget.style.borderColor = 'var(--brand-tint-40)';
+                        e.currentTarget.style.background = 'var(--brand-tint-10)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.color = active ? 'var(--brand-primary)' : 'var(--text-primary)';
+                        e.currentTarget.style.borderColor = active ? 'var(--brand-tint-30)' : 'var(--border)';
+                        e.currentTarget.style.background = active ? 'var(--brand-tint-10)' : 'var(--surface-04)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      <span style={{ fontSize: 15, lineHeight: 1 }}>{icon}</span>
+                      <span>{label}</span>
+                    </Link>
+                  );
+                })}
 
-                <div style={{ width: 1, height: 16, background: 'rgba(255,255,255,0.08)', margin: '0 8px' }} />
+                <div style={{ width: 1, height: 16, background: 'var(--border-strong)', margin: '0 8px' }} />
+
+                {themeButton}
 
                 {/* User pill */}
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 7,
                   padding: '4px 10px 4px 5px', borderRadius: 20,
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: 'var(--surface-04)',
+                  border: '1px solid var(--border)',
                 }}>
                   {user?.avatar ? (
                     <img src={user.avatar} alt=""
@@ -123,87 +230,108 @@ export default function Navbar() {
                   ) : (
                     <div style={{
                       width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
-                      background: 'linear-gradient(135deg,#2563EB,#7C3AED)',
+                      background: 'linear-gradient(135deg,var(--brand-blue),var(--brand-purple))',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: 10, fontWeight: 700, color: 'white',
                     }}>
                       {(user?.username || user?.githubUsername || 'U')[0].toUpperCase()}
                     </div>
                   )}
-                  <span style={{ fontSize: 13, color: '#CBD5E0', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {user?.username || user?.githubUsername || 'User'}
                   </span>
                 </div>
 
                 <button onClick={logout} style={{
-                  padding: '6px 14px', borderRadius: 7, fontSize: 13, fontWeight: 500,
-                  background: 'transparent', border: '1px solid rgba(255,255,255,0.07)',
-                  color: c.muted, cursor: 'pointer', transition: 'all 0.2s', marginLeft: 4,
+                  padding: '7px 15px', borderRadius: 999, fontSize: 13, fontWeight: 800, letterSpacing: 0.1,
+                  background: 'var(--surface-04)', border: '1px solid var(--border)',
+                  color: 'var(--text-primary)', cursor: 'pointer', transition: 'all 0.2s', marginLeft: 4,
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#F87171'; e.currentTarget.style.borderColor = 'rgba(248,113,113,0.25)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = c.muted; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; }}
-                >Logout</button>
+                  onMouseEnter={e => { e.currentTarget.style.color = 'var(--danger)'; e.currentTarget.style.borderColor = 'var(--danger-tint-25)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
+                >↗ Logout</button>
               </>
             ) : (
               <>
+                {themeButton}
                 <Link to="/login" style={{
-                  textDecoration: 'none', padding: '7px 16px', borderRadius: 7,
-                  fontSize: 14, fontWeight: 500, color: c.muted, transition: 'color 0.2s',
+                  textDecoration: 'none', padding: '8px 17px', borderRadius: 999,
+                  fontSize: 14, fontWeight: 800, letterSpacing: 0.15,
+                  color: isActive('/login') ? 'var(--brand-primary)' : 'var(--text-primary)',
+                  background: isActive('/login') ? 'var(--brand-tint-10)' : 'var(--surface-04)',
+                  border: isActive('/login') ? '1px solid var(--brand-tint-30)' : '1px solid var(--border)',
+                  boxShadow: '0 8px 22px var(--surface-05)',
+                  display: 'flex', alignItems: 'center', gap: 7,
+                  transition: 'all 0.2s',
                 }}
-                  onMouseEnter={e => e.currentTarget.style.color = c.text}
-                  onMouseLeave={e => e.currentTarget.style.color = c.muted}
-                >Login</Link>
+                  onMouseEnter={e => {
+                    e.currentTarget.style.color = 'var(--brand-primary)';
+                    e.currentTarget.style.borderColor = 'var(--brand-tint-40)';
+                    e.currentTarget.style.background = 'var(--brand-tint-10)';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.color = isActive('/login') ? 'var(--brand-primary)' : 'var(--text-primary)';
+                    e.currentTarget.style.borderColor = isActive('/login') ? 'var(--brand-tint-30)' : 'var(--border)';
+                    e.currentTarget.style.background = isActive('/login') ? 'var(--brand-tint-10)' : 'var(--surface-04)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                ><span style={{ fontSize: 15, lineHeight: 1 }}>🔐</span><span>Login</span></Link>
                 <Link to="/register" style={{
                   textDecoration: 'none', padding: '7px 18px', borderRadius: 7,
-                  fontSize: 14, fontWeight: 700, marginLeft: 4,
-                  background: 'linear-gradient(135deg,#2563EB,#7C3AED)',
-                  color: 'white', boxShadow: '0 0 20px rgba(79,156,249,0.2)',
+                  fontSize: 14, fontWeight: 900, letterSpacing: 0.15, marginLeft: 4,
+                  background: 'linear-gradient(135deg,var(--brand-blue),var(--brand-purple))',
+                  color: 'white', boxShadow: '0 10px 28px var(--brand-glow)',
+                  display: 'flex', alignItems: 'center', gap: 7,
                   transition: 'box-shadow 0.2s',
                 }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 30px rgba(79,156,249,0.35)'}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = '0 0 20px rgba(79,156,249,0.2)'}
-                >Get started</Link>
+                  onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 30px var(--brand-glow)'}
+                  onMouseLeave={e => e.currentTarget.style.boxShadow = '0 10px 28px var(--brand-glow)'}
+                ><span style={{ fontSize: 15, lineHeight: 1 }}>🚀</span><span>Get started</span></Link>
               </>
             )}
           </div>
         )}
 
-        {/* Mobile hamburger */}
+        {/* Mobile controls */}
         {isMobile && (
-          <button onClick={() => setOpen(!open)} style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            padding: 6, display: 'flex', flexDirection: 'column', gap: 5,
-            color: c.muted,
-          }}>
-            {[0,1,2].map(i => (
-              <span key={i} style={{
-                display: 'block', width: 18, height: 1.5,
-                background: 'currentColor', borderRadius: 2,
-                transition: 'all 0.25s ease',
-                transform: open && i === 0 ? 'rotate(45deg) translate(4.5px,4.5px)'
-                  : open && i === 1 ? 'scaleX(0)' : open && i === 2 ? 'rotate(-45deg) translate(4.5px,-4.5px)' : 'none',
-                opacity: open && i === 1 ? 0 : 1,
-              }} />
-            ))}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {themeButton}
+            <button onClick={() => setOpen(!open)} style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              padding: 6, display: 'flex', flexDirection: 'column', gap: 5,
+              color: 'var(--text-primary)',
+            }}>
+              {[0,1,2].map(i => (
+                <span key={i} style={{
+                  display: 'block', width: 19, height: 2,
+                  background: 'currentColor', borderRadius: 2,
+                  transition: 'all 0.25s ease',
+                  transform: open && i === 0 ? 'rotate(45deg) translate(4.5px,4.5px)'
+                    : open && i === 1 ? 'scaleX(0)' : open && i === 2 ? 'rotate(-45deg) translate(4.5px,-4.5px)' : 'none',
+                  opacity: open && i === 1 ? 0 : 1,
+                }} />
+              ))}
+            </button>
+          </div>
         )}
       </div>
 
       {/* Mobile menu */}
       {isMobile && open && (
         <div style={{
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-          background: 'rgba(3,5,8,0.98)',
+          borderTop: '1px solid var(--border-soft)',
+          background: 'var(--nav-menu-bg)',
           padding: '14px 24px 20px',
           animation: 'fadeUp 0.2s ease',
         }}>
           {token ? (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0 14px', borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0 14px', borderBottom: '1px solid var(--border-soft)', marginBottom: 10 }}>
                 {user?.avatar ? (
                   <img src={user.avatar} alt="" style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }} />
                 ) : (
-                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#2563EB,#7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: 'white' }}>
+                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,var(--brand-blue),var(--brand-purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: 'white' }}>
                     {(user?.username || user?.githubUsername || 'U')[0].toUpperCase()}
                   </div>
                 )}
@@ -213,14 +341,14 @@ export default function Navbar() {
                 </div>
               </div>
               {[{path:'/review',label:'⚡ Review'},{path:'/history',label:'📜 History'}].map(({path,label})=>(
-                <Link key={path} to={path} onClick={()=>setOpen(false)} style={{ display:'block', padding:'10px 0', textDecoration:'none', fontSize:14, color:'#CBD5E0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>{label}</Link>
+                <Link key={path} to={path} onClick={()=>setOpen(false)} style={{ display:'block', padding:'12px 0', textDecoration:'none', fontSize:15, fontWeight:800, color:'var(--text-primary)', borderBottom:'1px solid var(--surface-04)' }}>{label}</Link>
               ))}
-              <button onClick={logout} style={{ display:'block', width:'100%', textAlign:'left', padding:'12px 0', border:'none', background:'none', cursor:'pointer', fontSize:14, color:'#F87171', marginTop:4 }}>→ Logout</button>
+              <button onClick={logout} style={{ display:'block', width:'100%', textAlign:'left', padding:'12px 0', border:'none', background:'none', cursor:'pointer', fontSize:14, fontWeight:800, color:'var(--danger)', marginTop:4 }}>→ Logout</button>
             </>
           ) : (
             <>
-              <Link to="/login" onClick={()=>setOpen(false)} style={{ display:'block', padding:'10px 0', textDecoration:'none', fontSize:14, color:'#CBD5E0' }}>Login</Link>
-              <Link to="/register" onClick={()=>setOpen(false)} style={{ display:'block', padding:'11px', borderRadius:8, textDecoration:'none', fontSize:14, fontWeight:700, background:'linear-gradient(135deg,#2563EB,#7C3AED)', color:'white', textAlign:'center', marginTop:8 }}>Get Started Free</Link>
+              <Link to="/login" onClick={()=>setOpen(false)} style={{ display:'block', padding:'12px 0', textDecoration:'none', fontSize:15, fontWeight:800, color:'var(--text-primary)' }}>🔐 Login</Link>
+              <Link to="/register" onClick={()=>setOpen(false)} style={{ display:'block', padding:'11px', borderRadius:8, textDecoration:'none', fontSize:14, fontWeight:900, background:'linear-gradient(135deg,var(--brand-blue),var(--brand-purple))', color:'white', textAlign:'center', marginTop:8 }}>🚀 Get Started Free</Link>
             </>
           )}
         </div>
