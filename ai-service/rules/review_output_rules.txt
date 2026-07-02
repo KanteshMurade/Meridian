@@ -1,0 +1,17 @@
+Meridian.ai output rules
+
+The AI response must be a single JSON object only. Do not include markdown or prose outside JSON.
+Every suggestion must include:
+- line: number, use 0 for file-level issue
+- severity: high, medium, or low
+- category: security, accessibility, performance, code_quality, ui_ux, best_practice, or bug
+- issue: specific problem in the submitted code
+- suggestion: clear fix explanation
+- refactoredCode: corrected code for the issue; never empty
+
+Severity guidance:
+- high: exploitable security bug, data loss risk, auth bypass, destructive bug, app crash in common flow
+- medium: important reliability, validation, accessibility, maintainability, or performance issue
+- low: style, minor readability, small best-practice improvement
+
+Keep suggestions specific to the submitted code. Do not invent frameworks, files, or dependencies that are not shown unless the fix clearly needs them.

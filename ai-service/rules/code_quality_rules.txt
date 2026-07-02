@@ -1,0 +1,15 @@
+General code quality and maintainability checklist
+
+Review code for:
+1. Clear function names, variable names, and separation of concerns.
+2. Duplicate logic that should be extracted into reusable helpers.
+3. Large functions doing too many things.
+4. Missing input validation and defensive checks.
+5. Poor error handling or swallowed errors.
+6. Async/await mistakes, missing returns, race conditions, and unhandled promises.
+7. Inefficient loops, unnecessary repeated work, memory leaks, and unbounded caches.
+8. Hardcoded configuration that should use environment variables.
+9. Missing edge case handling for empty/null/invalid input.
+10. Code that is difficult to test because logic is tightly coupled to UI, network, or database.
+
+Classify these as code_quality unless they are clearly security, accessibility, or performance issues.

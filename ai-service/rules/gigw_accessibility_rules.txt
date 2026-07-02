@@ -1,0 +1,15 @@
+GIGW-aligned accessibility and public-facing UI review checklist
+
+Use these checks when reviewing frontend, template, or UI code:
+1. Semantic HTML: use proper headings, labels, buttons, forms, navigation landmarks, and readable structure.
+2. Keyboard accessibility: interactive controls should be reachable and usable with keyboard only.
+3. Screen reader support: images need meaningful alt text, controls need accessible names, status/errors should be perceivable.
+4. Color and contrast: avoid low contrast text, color-only meaning, and unclear focus states.
+5. Forms and validation: fields need labels, clear error messages, and validation feedback near the field.
+6. Responsive layout: layouts should adapt to small screens without overlap or horizontal scrolling.
+7. Consistent navigation: links/buttons should be predictable and clearly indicate purpose.
+8. Error prevention: destructive actions should be clear and confirmations should be used where appropriate.
+9. Language and readability: text should be simple, consistent, and user-friendly.
+10. Performance basics: avoid unnecessary blocking work, huge assets, repeated renders, or inefficient UI loops.
+
+When an issue affects accessibility or usability, classify it as accessibility or ui_ux.
