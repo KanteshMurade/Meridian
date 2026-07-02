@@ -1,0 +1,16 @@
+OWASP-style application security review checklist
+
+Use these checks when reviewing web/backend/API code:
+1. Broken access control: missing authentication, missing authorization, object ownership bypass, insecure direct object references, admin-only actions without role checks.
+2. Cryptographic failures: hardcoded secrets, weak token handling, plaintext passwords, missing hashing, insecure random values, sensitive data in logs or responses.
+3. Injection: SQL/NoSQL/command/template injection, unsafe string concatenation in queries, unsafe eval, unsafe dynamic code execution.
+4. Insecure design: missing rate limiting, missing abuse controls, insecure workflows, missing validation at backend boundaries.
+5. Security misconfiguration: verbose error exposure, unsafe CORS, debug mode in production, public secrets, default credentials.
+6. Vulnerable/outdated components: unsafe dependencies or framework patterns when visible in code.
+7. Identification/authentication failures: weak passwords, missing token expiry, missing account lockout, insecure session handling.
+8. Software/data integrity failures: unsafe deserialization, untrusted data execution, missing verification for external data.
+9. Security logging and monitoring failures: missing logging for auth/security events, logging too much sensitive data.
+10. Server-side request forgery: unsafe URL fetching from user input, no allowlist, internal network access risk.
+
+When an issue matches these checks, classify it as security and usually medium/high severity depending on exploitability.
+
