@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../services/api';
+import { login, verifyLoginCode } from '../services/api';
 import meridianLogo from '../assets/meridian-logo.png';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -8,6 +8,10 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 export default function Login() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [authCode, setAuthCode] = useState('');
+  const [authStep, setAuthStep] = useState('credentials');
+  const [maskedEmail, setMaskedEmail] = useState('');
+  const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
@@ -35,6 +39,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setNotice('');
     
     if (!validateForm()) {
       return;
@@ -43,11 +48,52 @@ export default function Login() {
     setLoading(true);
     try {
       const { data } = await login(form);
+
+      if (data.requiresEmailCode) {
+        setAuthStep('code');
+        setMaskedEmail(data.email || form.email);
+        setNotice(data.message || 'Authentication code sent to your email.');
+        setAuthCode('');
+        return;
+      }
+
       localStorage.setItem('token', data.token);
       navigate('/review');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally { setLoading(false); }
+  };
+
+  const handleCodeSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setNotice('');
+
+    if (!/^\d{6}$/.test(authCode.trim())) {
+      setError('Please enter the 6-digit authentication code.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data } = await verifyLoginCode({
+        email: form.email,
+        code: authCode.trim(),
+      });
+
+      localStorage.setItem('token', data.token);
+      navigate('/review');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Code verification failed. Please try again.');
+    } finally { setLoading(false); }
+  };
+
+  const resetToCredentials = () => {
+    setAuthStep('credentials');
+    setAuthCode('');
+    setMaskedEmail('');
+    setNotice('');
+    setError('');
   };
 
   const S = {
@@ -85,6 +131,11 @@ export default function Login() {
       color: 'var(--danger-text)', borderRadius: 10, padding: '10px 14px',
       fontSize: 13, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8,
     },
+    notice: {
+      background: 'var(--brand-tint-08)', border: '1px solid var(--brand-tint-20)',
+      color: 'var(--text-secondary)', borderRadius: 10, padding: '10px 14px',
+      fontSize: 13, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8,
+    },
     label: { display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 7 },
     input: {
       width: '100%', padding: '12px 14px', borderRadius: 10, fontSize: 14,
@@ -109,6 +160,13 @@ export default function Login() {
     divider: { display: 'flex', alignItems: 'center', gap: 12, margin: '22px 0' },
     divLine: { flex: 1, height: 1, background: 'var(--border)' },
     divText: { fontSize: 12, color: 'var(--text-faint)' },
+    secondaryBtn: {
+      width: '100%', padding: '12px', borderRadius: 10, fontSize: 14, fontWeight: 700,
+      background: 'transparent', border: '1px solid var(--border-strong)',
+      color: 'var(--text-secondary)', cursor: 'pointer',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+      transition: 'all 0.2s', marginTop: 12,
+    },
     githubBtn: {
       width: '100%', padding: '12px', borderRadius: 10, fontSize: 14, fontWeight: 600,
       background: 'var(--surface-04)', border: '1px solid var(--surface-10)',
@@ -143,90 +201,132 @@ export default function Login() {
         </div>
 
         <div style={S.card}>
-          <h1 style={S.heading}>Welcome back</h1>
-          <p style={S.sub}>Sign in to your account to continue</p>
+          <h1 style={S.heading}>{authStep === 'code' ? 'Verify your email' : 'Welcome back'}</h1>
+          <p style={S.sub}>
+            {authStep === 'code'
+              ? `Enter the 6-digit code sent to ${maskedEmail || form.email}`
+              : 'Sign in to your account to continue'}
+          </p>
 
           {error && <div style={S.error} role="alert" aria-live="assertive">⚠️ {error}</div>}
+          {notice && <div style={S.notice} role="status" aria-live="polite">📩 {notice}</div>}
 
-          <form onSubmit={handleSubmit} noValidate>
-            <div style={S.fieldWrap}>
-              <label style={S.label} htmlFor="email-input">Email Address</label>
-              <input
-                id="email-input"
-                type="email" 
-                style={S.input} 
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={e => setForm({ ...form, email: e.target.value })}
-                onFocus={focusStyle} 
-                onBlur={blurStyle}
-                required
-                aria-required="true"
-                aria-describedby={error ? 'error-message' : undefined}
-              />
-            </div>
+          {authStep === 'credentials' ? (
+            <>
+              <form onSubmit={handleSubmit} noValidate>
+                <div style={S.fieldWrap}>
+                  <label style={S.label} htmlFor="email-input">Email Address</label>
+                  <input
+                    id="email-input"
+                    type="email" 
+                    style={S.input} 
+                    placeholder="you@example.com"
+                    value={form.email}
+                    onChange={e => setForm({ ...form, email: e.target.value })}
+                    onFocus={focusStyle} 
+                    onBlur={blurStyle}
+                    required
+                    aria-required="true"
+                    aria-describedby={error ? 'error-message' : undefined}
+                  />
+                </div>
 
-            <div style={S.fieldWrap}>
-              <label style={S.label} htmlFor="password-input">Password</label>
-              <div style={S.passWrap}>
+                <div style={S.fieldWrap}>
+                  <label style={S.label} htmlFor="password-input">Password</label>
+                  <div style={S.passWrap}>
+                    <input
+                      id="password-input"
+                      type={showPass ? 'text' : 'password'} 
+                      style={{ ...S.input, paddingRight: 42 }}
+                      placeholder="••••••••"
+                      value={form.password}
+                      onChange={e => setForm({ ...form, password: e.target.value })}
+                      onFocus={focusStyle} 
+                      onBlur={blurStyle}
+                      required
+                      aria-required="true"
+                      aria-describedby={error ? 'error-message' : undefined}
+                    />
+                    <button 
+                      type="button" 
+                      style={S.eyeBtn} 
+                      onClick={() => setShowPass(!showPass)}
+                      aria-label={showPass ? 'Hide password' : 'Show password'}
+                      tabIndex={0}
+                    >
+                      {showPass ? '🙈' : '👁'}
+                    </button>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={loading} 
+                  style={{ ...S.btn, opacity: loading ? 0.7 : 1 }}
+                  aria-busy={loading}
+                >
+                  {loading ? <><span className="spinner" /> Sending code...</> : 'Send Login Code →'}
+                </button>
+              </form>
+
+              <div style={S.divider}>
+                <div style={S.divLine} />
+                <span style={S.divText}>or continue with</span>
+                <div style={S.divLine} />
+              </div>
+
+              <button
+                style={S.githubBtn}
+                onClick={() => window.location.href = `${API_BASE_URL}/github/login`}
+                onMouseEnter={e => { e.target.style.background = 'var(--border)'; e.target.style.borderColor = 'var(--surface-15)'; }}
+                onMouseLeave={e => { e.target.style.background = 'var(--surface-04)'; e.target.style.borderColor = 'var(--surface-10)'; }}
+                aria-label="Sign in with GitHub"
+              >
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                Continue with GitHub
+              </button>
+
+              <p style={S.foot}>
+                Don't have an account?{' '}
+                <Link to="/register" style={S.link}>Sign up free</Link>
+              </p>
+            </>
+          ) : (
+            <form onSubmit={handleCodeSubmit} noValidate>
+              <div style={S.fieldWrap}>
+                <label style={S.label} htmlFor="code-input">Authentication Code</label>
                 <input
-                  id="password-input"
-                  type={showPass ? 'text' : 'password'} 
-                  style={{ ...S.input, paddingRight: 42 }}
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
-                  onFocus={focusStyle} 
+                  id="code-input"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  style={{ ...S.input, textAlign: 'center', letterSpacing: 8, fontSize: 22, fontWeight: 800 }}
+                  placeholder="000000"
+                  value={authCode}
+                  onChange={e => setAuthCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onFocus={focusStyle}
                   onBlur={blurStyle}
                   required
                   aria-required="true"
-                  aria-describedby={error ? 'error-message' : undefined}
                 />
-                <button 
-                  type="button" 
-                  style={S.eyeBtn} 
-                  onClick={() => setShowPass(!showPass)}
-                  aria-label={showPass ? 'Hide password' : 'Show password'}
-                  tabIndex={0}
-                >
-                  {showPass ? '🙈' : '👁'}
-                </button>
               </div>
-            </div>
 
-            <button 
-              type="submit" 
-              disabled={loading} 
-              style={{ ...S.btn, opacity: loading ? 0.7 : 1 }}
-              aria-busy={loading}
-            >
-              {loading ? <><span className="spinner" /> Signing in...</> : 'Sign In →'}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={loading}
+                style={{ ...S.btn, opacity: loading ? 0.7 : 1 }}
+                aria-busy={loading}
+              >
+                {loading ? <><span className="spinner" /> Verifying...</> : 'Verify & Sign In →'}
+              </button>
 
-          <div style={S.divider}>
-            <div style={S.divLine} />
-            <span style={S.divText}>or continue with</span>
-            <div style={S.divLine} />
-          </div>
-
-          <button
-            style={S.githubBtn}
-            onClick={() => window.location.href = `${API_BASE_URL}/github/login`}
-            onMouseEnter={e => { e.target.style.background = 'var(--border)'; e.target.style.borderColor = 'var(--surface-15)'; }}
-            onMouseLeave={e => { e.target.style.background = 'var(--surface-04)'; e.target.style.borderColor = 'var(--surface-10)'; }}
-            aria-label="Sign in with GitHub"
-          >
-            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-            Continue with GitHub
-          </button>
-
-          <p style={S.foot}>
-            Don't have an account?{' '}
-            <Link to="/register" style={S.link}>Sign up free</Link>
-          </p>
+              <button type="button" style={S.secondaryBtn} onClick={resetToCredentials} disabled={loading}>
+                ← Use different email
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </main>

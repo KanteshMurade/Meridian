@@ -2,6 +2,16 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import meridianLogo from '../assets/meridian-logo.png';
 
+
+const PRESET_AVATARS = {
+  'avatar-1': { icon: '👩‍💻', bg: 'linear-gradient(135deg, #2563eb, #7c3aed)' },
+  'avatar-2': { icon: '🧑‍💻', bg: 'linear-gradient(135deg, #0891b2, #4f46e5)' },
+  'avatar-3': { icon: '🤖', bg: 'linear-gradient(135deg, #7c3aed, #db2777)' },
+  'avatar-4': { icon: '🚀', bg: 'linear-gradient(135deg, #ea580c, #7c3aed)' },
+  'avatar-5': { icon: '🛡️', bg: 'linear-gradient(135deg, #059669, #2563eb)' },
+  'avatar-6': { icon: '✨', bg: 'linear-gradient(135deg, #9333ea, #2563eb)' },
+};
+
 const getSavedTheme = () => {
   if (typeof window === 'undefined') return 'dark';
   return localStorage.getItem('theme') || 'dark';
@@ -10,7 +20,7 @@ const getSavedTheme = () => {
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const token = localStorage.getItem('token');
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
@@ -23,25 +33,54 @@ export default function Navbar() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Fetch user profile from backend if token exists
+  // Keep navbar auth state in sync with the latest token.
+  // This prevents an old GitHub profile/avatar from staying visible after logout
+  // and then logging in with a normal email/password account.
   useEffect(() => {
-    if (token && !user) {
-      const fetchUser = async () => {
-        try {
-          const response = await fetch('http://localhost:5000/api/auth/profile', {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (response.ok) {
-            const userData = await response.json();
-            setUser(userData);
-          }
-        } catch (error) {
+    setToken(localStorage.getItem('token'));
+  }, [location.pathname]);
+
+  // Fetch the correct user profile every time the token changes.
+  // Also refresh when Profile.jsx saves edited profile details.
+  useEffect(() => {
+    let isMounted = true;
+
+    if (!token) {
+      setUser(null);
+      return undefined;
+    }
+
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!isMounted) return;
+
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          localStorage.removeItem('token');
+          setToken(null);
+          setUser(null);
+        }
+      } catch (error) {
+        if (isMounted) {
           console.error('Failed to fetch user profile:', error);
         }
-      };
-      fetchUser();
-    }
-  }, [token, user]);
+      }
+    };
+
+    fetchUser();
+    window.addEventListener('meridian-profile-updated', fetchUser);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('meridian-profile-updated', fetchUser);
+    };
+  }, [token]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -56,8 +95,10 @@ export default function Navbar() {
 
   const logout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    setToken(null);
+    setUser(null);
     setOpen(false);
+    navigate('/login');
   };
 
   const toggleTheme = () => {
@@ -73,6 +114,46 @@ export default function Navbar() {
     purple: 'var(--brand-purple-soft)',
     text: 'var(--text-primary)',
     muted: 'var(--text-muted)',
+  };
+
+
+  const getDisplayName = () => {
+    return user?.displayName || user?.username || user?.githubUsername || 'User';
+  };
+
+  const renderAvatar = (size = 22, fontSize = 12) => {
+    const isGithubUser = user?.accountType === 'github' || user?.githubConnected;
+
+    if (isGithubUser && user?.avatar) {
+      return (
+        <img
+          src={user.avatar}
+          alt=""
+          style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+        />
+      );
+    }
+
+    const selected = PRESET_AVATARS[user?.selectedAvatar] || PRESET_AVATARS['avatar-1'];
+
+    return (
+      <div style={{
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        flexShrink: 0,
+        background: selected.bg,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize,
+        fontWeight: 900,
+        color: 'white',
+        boxShadow: '0 0 16px var(--brand-tint-20)',
+      }}>
+        {selected.icon}
+      </div>
+    );
   };
 
   const themeButton = (
@@ -216,31 +297,20 @@ export default function Navbar() {
 
                 {themeButton}
 
-                {/* User pill */}
-                <div style={{
+                {/* User profile pill */}
+                <Link to="/profile" title="View profile" aria-label="View profile" style={{
                   display: 'flex', alignItems: 'center', gap: 7,
                   padding: '4px 10px 4px 5px', borderRadius: 20,
-                  background: 'var(--surface-04)',
-                  border: '1px solid var(--border)',
+                  background: isActive('/profile') ? 'var(--brand-tint-10)' : 'var(--surface-04)',
+                  border: isActive('/profile') ? '1px solid var(--brand-tint-30)' : '1px solid var(--border)',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s',
                 }}>
-                  {user?.avatar ? (
-                    <img src={user.avatar} alt=""
-                      style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
-                    />
-                  ) : (
-                    <div style={{
-                      width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
-                      background: 'linear-gradient(135deg,var(--brand-blue),var(--brand-purple))',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 10, fontWeight: 700, color: 'white',
-                    }}>
-                      {(user?.username || user?.githubUsername || 'U')[0].toUpperCase()}
-                    </div>
-                  )}
+                  {renderAvatar(22, 11)}
                   <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {user?.username || user?.githubUsername || 'User'}
+                    {getDisplayName()}
                   </span>
-                </div>
+                </Link>
 
                 <button onClick={logout} style={{
                   padding: '7px 15px', borderRadius: 999, fontSize: 13, fontWeight: 800, letterSpacing: 0.1,
@@ -328,19 +398,13 @@ export default function Navbar() {
           {token ? (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0 14px', borderBottom: '1px solid var(--border-soft)', marginBottom: 10 }}>
-                {user?.avatar ? (
-                  <img src={user.avatar} alt="" style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,var(--brand-blue),var(--brand-purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: 'white' }}>
-                    {(user?.username || user?.githubUsername || 'U')[0].toUpperCase()}
-                  </div>
-                )}
+                {renderAvatar(34, 15)}
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: c.text }}>{user?.username || user?.githubUsername || 'User'}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: c.text }}>{getDisplayName()}</div>
                   <div style={{ fontSize: 11, color: c.muted, fontFamily: "'JetBrains Mono',monospace" }}>signed in</div>
                 </div>
               </div>
-              {[{path:'/review',label:'⚡ Review'},{path:'/history',label:'📜 History'}].map(({path,label})=>(
+              {[{path:'/review',label:'⚡ Review'},{path:'/history',label:'📜 History'},{path:'/profile',label:'👤 Profile'}].map(({path,label})=>(
                 <Link key={path} to={path} onClick={()=>setOpen(false)} style={{ display:'block', padding:'12px 0', textDecoration:'none', fontSize:15, fontWeight:800, color:'var(--text-primary)', borderBottom:'1px solid var(--surface-04)' }}>{label}</Link>
               ))}
               <button onClick={logout} style={{ display:'block', width:'100%', textAlign:'left', padding:'12px 0', border:'none', background:'none', cursor:'pointer', fontSize:14, fontWeight:800, color:'var(--danger)', marginTop:4 }}>→ Logout</button>

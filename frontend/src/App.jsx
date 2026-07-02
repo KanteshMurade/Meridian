@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Review from './pages/Review';
 import History from './pages/History';
+import Profile from './pages/Profile';
 import GitHubCallback from './pages/GithubCallback';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/review" element={<Review />} />
         <Route path="/history" element={<History />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/github/callback" element={<GitHubCallback />} />
       </Routes>
     </Router>
