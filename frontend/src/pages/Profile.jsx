@@ -270,7 +270,7 @@ export default function Profile() {
   };
 
   const labelStyle = {
-    fontSize: 12,
+    fontSize: 15,
     color: 'var(--text-muted)',
     fontWeight: 800,
     letterSpacing: 0.8,
@@ -346,7 +346,7 @@ export default function Profile() {
 
               <div style={{ minWidth: 0 }}>
                 <div style={{ ...labelStyle, marginBottom: 5 }}>User Profile</div>
-                <h1 style={{ margin: 0, fontSize: 31, color: 'var(--text-heading)', letterSpacing: -1, lineHeight: 1.05, wordBreak: 'break-word' }}>
+                <h1 style={{ margin: 0, fontSize: 23, color: 'var(--text-heading)', letterSpacing: -1, lineHeight: 1.05, wordBreak: 'break-word' }}>
                   {getDisplayName(profile)}
                 </h1>
                 <p style={{ margin: '8px 0 0', color: 'var(--text-muted)', fontSize: 14, wordBreak: 'break-word' }}>
@@ -417,7 +417,7 @@ export default function Profile() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
                 <div>
                   <div style={{ ...labelStyle, marginBottom: 8 }}>Dashboard Overview</div>
-                  <h2 style={{ margin: 0, color: 'var(--text-heading)', fontSize: 34, letterSpacing: -1.2 }}>
+                  <h2 style={{ margin: 0, color: 'var(--text-heading)', fontSize: 30, letterSpacing: -1.2 }}>
                     Your review activity
                   </h2>
                   <p style={{ margin: '10px 0 0', color: 'var(--text-muted)', lineHeight: 1.65, maxWidth: 650 }}>
@@ -628,13 +628,6 @@ export default function Profile() {
                     </div>
                   ))}
                 </div>
-              </div>
-
-              <div style={{ padding: 15, borderRadius: 18, background: 'linear-gradient(135deg,var(--brand-tint-08),var(--purple-tint-10))', border: '1px solid var(--brand-tint-30)' }}>
-                <div style={{ color: 'var(--text-heading)', fontWeight: 950, marginBottom: 6 }}>Profile section purpose</div>
-                <p style={{ margin: 0, color: 'var(--text-muted)', lineHeight: 1.6, fontSize: 14 }}>
-                  This dashboard gives each user a private summary of their account, review history, score quality, and issue severity trends.
-                </p>
               </div>
             </div>
           </div>
